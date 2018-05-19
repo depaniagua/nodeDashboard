@@ -1,0 +1,14 @@
+{
+  "name": "taller_ejemplo",
+  "version": "1.0.0",
+  "description": "Components to deploy real time example: bridge mosquitto-kafka, kafka consumer, GUI component",
+  "author": "CesarF",
+  "dependencies": {
+    "mqtt": "^1.7.3",
+    "amqplib":"*",
+    "no-kafka": "*",
+    "redis":"*",
+	"express": "4.10.2",
+    "socket.io": "1.2.0"
+  }
+}
