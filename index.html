@@ -1,8 +1,9 @@
 <!doctype html>
-<html>
+<html class="no-js" lang="">
   <head>
     <title>Ejemplo real-time</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font: 13px Helvetica, Arial; }
@@ -24,9 +25,39 @@
     </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <!--script src="/dash.js"></script-->
+
+<canvas id="lineChart" class="col-md-6"></canvas>
+
     <script>
-        // Usuario actual
+      const CHART = document.getElementById("lineChart");
+      console.log(CHART);
+      let lineChart = new Chart(CHART, {
+        type: 'line',
+data: {
+  //  labels: [1500,1600,1700,1750,1800,1850,1900,1950,1999,2050],
+     labels: [], 
+     datasets: [{ 
+	label: "Luz",
+	borderColor: "#8e5ea2",
+           data: [],
+      //  data: [86,114,106,106,107,111,133,121,183,178],
+       // label: "Africa",
+        borderColor: "#3e95cd",
+        fill: false
+      }
+    ]
+  },
+  options: {  }
+    });
+    </script>
+    <script>
+  
         var number = 0;
+	var contLuz = 0;
+	var contCur = 0;
+	var contTem = 0;
 
         // Abre conexión bi-direccional con el servidor
         var socket = io();
@@ -35,11 +66,31 @@
         socket.on('stream', function(msg){
 
             // Agrega un nuevo mensaje a la lista de mensajes
-            var message = msg.split(';@')[0];
-            $('#stream-data').prepend($('<li>').text('Data: ' + message + ' time: ' + new Date()));
-			window.scrollTo(0, document.body.scrollHeight);
+         var message = msg.split(';@')[0];
+         console.log(message);
+         var topico = message.split(',')[0];
+	 var nombre = topico.split(':')[0];
+         var valor = parseInt(topico.split(':')[1]);
+         console.log(nombre + ' ' + valor);
+	if(nombre == "Luz")
+	  {number= contLuz; contLuz ++;}
+  	if(nombre == "Temperatura")
+	  {number = contTem; contTem ++;}
+	if(nombre == "Current")
+	  {number = contCur; contCur ++;}
+         lineChart.data.labels.push(number);
+         lineChart.data.datasets.forEach((dataset) => {
+         dataset.data.push(valor);
+         });
+         lineChart.update();
+      
+//            $('#stream-data').prepend($('<li>').text('Data: ' + message + ' time: ' + new Date()));
+//			window.scrollTo(0, document.body.scrollHeight);
         });
 
     </script>
+
+
+
   </body>
 </html>

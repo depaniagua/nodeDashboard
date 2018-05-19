@@ -16,8 +16,10 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
 
     // Emite (publica) en el tópico 'stream' los datos que se publican en redis
-	var sub = redis.createClient();
-	sub.subscribe("numbers");
+	var sub = redis.createClient('6379', 'ec2-18-228-42-146.sa-east-1.compute.amazonaws.com', { detect_buffers: true });
+        sub.subscribe("Lumens");
+        sub.subscribe("temperature");
+        sub.subscribe("current");
 	sub.on("message", function (channel, message) {
 		console.log('SocketIO receive: ' + message);
 		io.emit('stream', message);
